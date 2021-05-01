@@ -1,0 +1,9 @@
+
+fun int main()
+    var i1: bool = false
+
+    i1 = true
+
+    
+
+end
