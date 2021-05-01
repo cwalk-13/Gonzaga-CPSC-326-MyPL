@@ -28,6 +28,7 @@ public:
   void visit(Repl& node);
   void visit(TypeDecl& node);
   // statements
+  void visit(ReplEndpoint& node);
   void visit(VarDeclStmt& node);
   void visit(AssignStmt& node);
   void visit(ReturnStmt& node);
@@ -117,14 +118,6 @@ void Interpreter::visit(Program& node)
   sym_table.pop_environment();
 }
 
-void Interpreter::visit(Repl& node)
-{
-  // Repl* temp = new Repl;
-  // *temp = node;
-  // functions[node.id.lexeme()] = temp;
-  // temp = nullptr;
-}
-
 void Interpreter::visit(FunDecl& node)
 {
   FunDecl * temp = new FunDecl;
@@ -139,6 +132,22 @@ void Interpreter::visit(TypeDecl& node)
   *temp = node;
   types[node.id.lexeme()] = temp;
   temp = nullptr;
+}
+
+void Interpreter::visit(Repl& node)
+{
+  // Repl* temp = new Repl;
+  // *temp = node;
+  // functions[node.id.lexeme()] = temp;
+  // temp = nullptr;
+}
+
+void Interpreter::visit(ReplEndpoint& node)
+{
+  // Repl* temp = new Repl;
+  // *temp = node;
+  // functions[node.id.lexeme()] = temp;
+  // temp = nullptr;
 }
 
 void Interpreter::visit(VarDeclStmt& node)

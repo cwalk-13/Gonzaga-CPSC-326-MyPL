@@ -23,6 +23,7 @@
 class Program;
 class Decl;
 class Repl;
+class ReplEndpoint;
 class FunDecl;
 class TypeDecl;
 class Stmt;
@@ -50,6 +51,7 @@ public:
   virtual void visit(TypeDecl& node) = 0;
   virtual void visit(Repl& node) = 0;
   // statements
+  virtual void visit(ReplEndpoint& node) = 0;
   virtual void visit(VarDeclStmt& node) = 0;
   virtual void visit(AssignStmt& node) = 0;
   virtual void visit(ReturnStmt& node) = 0;
@@ -171,16 +173,6 @@ public:
   void accept(Visitor& v) {v.visit(*this);}
 };
 
-class Repl : public Decl
-{
-public:
-  std::list<Stmt*> stmts;                  // function body 
-  // cleanup memory
-  ~Repl() {for (Stmt* s : stmts) delete s;}
-  // visitor access
-  void accept(Visitor& v) {v.visit(*this);}
-};
-
 class FunDecl : public Decl
 {
 public:
@@ -220,11 +212,29 @@ public:
   void accept(Visitor& v) {v.visit(*this);}
 };
 
+class Repl : public ASTNode
+{
+public:
+  std::list<Stmt*> stmts;                  // function body 
+  // cleanup memory
+  ~Repl() {for (Stmt* s : stmts) delete s;}
+  // visitor access
+  void accept(Visitor& v) {v.visit(*this);}
+};
 
 //----------------------------------------------------------------------
 // Statement nodes
 //----------------------------------------------------------------------
 
+class ReplEndpoint : public Stmt
+{
+  public:
+    Expr* expr = nullptr;        
+    // cleanup memory
+    ~ReplEndpoint() {delete expr;}
+    // visitor access
+    void accept(Visitor& v) {v.visit(*this);}
+};
 
 class AssignStmt : public Stmt
 {

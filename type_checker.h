@@ -24,6 +24,7 @@ public:
   void visit(FunDecl& node);
   void visit(TypeDecl& node);
   // statements
+  void visit(ReplEndpoint& node);
   void visit(VarDeclStmt& node);
   void visit(AssignStmt& node);
   void visit(ReturnStmt& node);
@@ -137,10 +138,6 @@ void TypeChecker::visit(Program& node)
   sym_table.pop_environment();
 }
 
-void TypeChecker::visit(Repl& node)
-{
-}
-
 // TODO: Implement the remaining visitor functions
 void TypeChecker::visit(FunDecl& node)
 {
@@ -228,9 +225,15 @@ void TypeChecker::visit(TypeDecl& node)
   sym_table.set_map_info(node.id.lexeme(), type_info);
 }
 
+void TypeChecker::visit(Repl& node)
+{
+}
 //----------------------------------------------------------------------
 // Statement nodes
 //----------------------------------------------------------------------
+void TypeChecker::visit(ReplEndpoint& node)
+{
+}
 
 void TypeChecker::visit(VarDeclStmt& node)
 {

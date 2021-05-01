@@ -21,11 +21,11 @@ public:
 
   // run the parser
   void parse(Program& node);
-  
+  void parse(Repl& node);
 private:
   Lexer lexer;
   Token curr_token;
-  
+  bool re_found = false;
   // helper functions
   void advance();
   void eat(TokenType t, std::string err_msg);
@@ -33,7 +33,6 @@ private:
   bool is_operator(TokenType t);
   void dtype();
   // top-level
-  void rpl(Repl& node);
   void tdecl(TypeDecl& node);
   void fdecl(FunDecl& node);
   //expressions
@@ -43,6 +42,7 @@ private:
   void new_rvalue(NewRValue& node);
   void neg_rvalue(NegatedRValue& node);
   //statements
+  void repl_endpoint(ReplEndpoint& node);
   void stmt(std::list<Stmt*>& stmts, bool in_repl = false);
   void vdecl_stmt(VarDeclStmt& node);
   void assign_stmt(AssignStmt& node);
@@ -96,6 +96,21 @@ bool Parser::is_operator(TokenType t)
 //----------------------------------------------------------------------
 // Function, Variable, and Type Declarations
 //----------------------------------------------------------------------
+//Repl session
+void Parser::parse(Repl& node)
+{
+  advance();
+  // std::cout << "in Repl \n";
+  while (re_found == false)
+  {
+    stmt(node.stmts, true);
+  }
+  re_found = false;
+
+  if(curr_token.type() == EOS) {
+    eat(EOS, "Expecting end-of-file ");
+  }
+}
 
 void Parser::parse(Program& node)
 {
@@ -120,9 +135,7 @@ void Parser::parse(Program& node)
 
     else
     {
-      Repl* r = new Repl();
-      rpl(*r);
-      node.decls.push_back(r);
+      error("Expecting Decl");
     }
   }
   eat(EOS, "Expecting end-of-file ");
@@ -181,15 +194,6 @@ void Parser::tdecl(TypeDecl& node)
   eat(END, "expecteing end ");
 }
 
-//Repl session
-void Parser::rpl(Repl& node)
-{
-  std::cout << "in Repl \n";
-  while (curr_token.type() != EOS)
-  {
-    stmt(node.stmts, true);
-  }
-}
 //----------------------------------------------------------------------
 // Statement nodes
 //----------------------------------------------------------------------
@@ -271,12 +275,27 @@ void Parser::stmt(std::list<Stmt*>& stmts, bool in_repl)
     return_stmt(*r);
     stmts.push_back(r);
   }
-  else if (in_repl){
-    std::cout << "made it" << "\n";
+  else if (in_repl) {
+    ReplEndpoint* re = new ReplEndpoint();
+    repl_endpoint(*re);
+    stmts.push_back(re);
   }
   else 
     error("unexpected token ");
 }
+
+
+//repl endpoint
+void Parser::repl_endpoint(ReplEndpoint& node)
+{
+  std::cout << "endpoint found \n";
+  Expr* e = new Expr();
+  expr(*e);
+  node.expr = e;
+  re_found = true;
+}
+
+
 
 //vardecl stmt node
 void Parser::vdecl_stmt(VarDeclStmt& node)

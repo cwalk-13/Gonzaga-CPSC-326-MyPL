@@ -59,8 +59,8 @@ int main(int argc, char* argv[])
     // read each token in the file until EOS or error
     Interpreter interpreter;
     try {
-      Program ast_root_node;
-      parser.parse(ast_root_node);
+      Repl repl_node;
+      parser.parse(repl_node);
       TypeChecker type_checker;
       ast_root_node.accept(type_checker);
       ast_root_node.accept(interpreter);
