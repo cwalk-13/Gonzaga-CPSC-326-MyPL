@@ -46,7 +46,7 @@ private:
   void stmt(std::list<Stmt*>& stmts, bool in_repl = false);
   void vdecl_stmt(VarDeclStmt& node);
   void assign_stmt(AssignStmt& node);
-  void return_stmt(ReturnStmt& node);
+  void return_stmt(ReturnStmt& node, bool in_repl = false);
   void while_stmt(WhileStmt& node);
   void for_stmt(ForStmt& node);
   void if_stmt(IfStmt& node);
@@ -99,14 +99,14 @@ bool Parser::is_operator(TokenType t)
 //Repl session
 void Parser::parse(Repl& node)
 {
+  std::cout << "Enter statements: \n";
   advance();
-  // std::cout << "in Repl \n";
-  while (re_found == false)
+  while (re_found == false && curr_token.type()!= EOS)
   {
     stmt(node.stmts, true);
   }
   re_found = false;
-
+  // std::cout << "endpoint found \n";
   if(curr_token.type() == EOS) {
     eat(EOS, "Expecting end-of-file ");
   }
@@ -272,14 +272,14 @@ void Parser::stmt(std::list<Stmt*>& stmts, bool in_repl)
   }
   else if (curr_token.type() == RETURN) {
     ReturnStmt* r = new ReturnStmt();
-    return_stmt(*r);
+    return_stmt(*r, in_repl);
     stmts.push_back(r);
   }
-  else if (in_repl) {
-    ReplEndpoint* re = new ReplEndpoint();
-    repl_endpoint(*re);
-    stmts.push_back(re);
-  }
+  // else if (in_repl) {
+  //   ReplEndpoint* re = new ReplEndpoint();
+  //   repl_endpoint(*re);
+  //   stmts.push_back(re);
+  // }
   else 
     error("unexpected token ");
 }
@@ -341,12 +341,15 @@ void Parser::assign_stmt(AssignStmt& node)
 }
 
 //returnstmt node
-void Parser::return_stmt(ReturnStmt& node)
+void Parser::return_stmt(ReturnStmt& node, bool in_repl)
 {
   eat(RETURN, "expecting return ");
   Expr* e = new Expr();
   expr(*e);
   node.expr = e;
+  if(in_repl) {
+    re_found = true;
+  }
 }
 
 //ifstmt node
@@ -508,11 +511,6 @@ void Parser::expr(Expr& node)
     Expr* e = new Expr();
     expr(*e);
     node.rest = e;
-
-    //keep here just in case
-    // if (curr_token.type() == RPAREN) {
-    //   eat(RPAREN, "Expected RPAREN ");
-    // }
   }
 }
 

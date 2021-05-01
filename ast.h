@@ -229,7 +229,7 @@ public:
 class ReplEndpoint : public Stmt
 {
   public:
-    Expr* expr = nullptr;        
+    Expr* expr = nullptr;    //basically return statement
     // cleanup memory
     ~ReplEndpoint() {delete expr;}
     // visitor access

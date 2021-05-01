@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     Lexer lexer(*input_stream);
     Parser parser(lexer);
     // make a bunch of repl Nodes
-    // loop through those nodes
+    // loop through those nodes, just loop until EOS trust the lexer and parser will be in right spot
     //   parse through the node
     //   type check the node
     //   interpret the node
@@ -62,8 +62,9 @@ int main(int argc, char* argv[])
       Repl repl_node;
       parser.parse(repl_node);
       TypeChecker type_checker;
-      ast_root_node.accept(type_checker);
-      ast_root_node.accept(interpreter);
+      repl_node.accept(type_checker);
+      cout << "type checked \n";
+      repl_node.accept(interpreter);
     } catch (MyPLException e) {
       cout << e.to_string() << endl;
       exit(1);

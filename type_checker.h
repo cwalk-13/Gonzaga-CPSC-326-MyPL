@@ -107,6 +107,21 @@ void TypeChecker::initialize_built_in_types()
 //----------------------------------------------------------------------
 // Function, Variable, and Type Declarations
 //----------------------------------------------------------------------
+void TypeChecker::visit(Repl& node)
+{
+    // push the global environment
+
+  sym_table.push_environment();
+  // add built-in functions
+  initialize_built_in_types();
+
+  //Continue to statements
+  for(Stmt* s : node.stmts)
+    s->accept(*this);
+    
+   // pop the global environment
+  sym_table.pop_environment();
+}
 
 void TypeChecker::visit(Program& node)
 {
@@ -225,9 +240,6 @@ void TypeChecker::visit(TypeDecl& node)
   sym_table.set_map_info(node.id.lexeme(), type_info);
 }
 
-void TypeChecker::visit(Repl& node)
-{
-}
 //----------------------------------------------------------------------
 // Statement nodes
 //----------------------------------------------------------------------

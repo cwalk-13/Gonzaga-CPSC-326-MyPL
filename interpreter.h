@@ -106,6 +106,19 @@ void Interpreter::error(const std::string& msg)
 //----------------------------------------------------------------------
 // Function, Variable, and Type Declarations
 //----------------------------------------------------------------------
+void Interpreter::visit(Repl& node)
+{
+  sym_table.push_environment();
+  global_env_id = sym_table.get_environment_id();
+  std::list<Stmt*> stmts = node.stmts;
+  while (stmts.size() != 0)
+  {
+    stmts.front() -> accept(*this);
+    stmts.pop_front();
+  }
+  sym_table.pop_environment();
+}
+
 void Interpreter::visit(Program& node)
 {
   sym_table.push_environment();
@@ -132,14 +145,6 @@ void Interpreter::visit(TypeDecl& node)
   *temp = node;
   types[node.id.lexeme()] = temp;
   temp = nullptr;
-}
-
-void Interpreter::visit(Repl& node)
-{
-  // Repl* temp = new Repl;
-  // *temp = node;
-  // functions[node.id.lexeme()] = temp;
-  // temp = nullptr;
 }
 
 void Interpreter::visit(ReplEndpoint& node)
@@ -239,7 +244,11 @@ void Interpreter::visit(AssignStmt& node)
 void Interpreter::visit(ReturnStmt& node)
 {
     node.expr -> accept(*this);
-    throw new MyPLReturnException;
+    std::string str = curr_val.to_string();
+    str = std::regex_replace(str, std::regex("\\\\n"), "\n");
+    str = std::regex_replace(str, std::regex("\\\\t"), "\t");
+    std::cout <<">>>" << str << "\n";
+      // throw new MyPLReturnException;
 }
 
 void Interpreter::visit(IfStmt& node)
