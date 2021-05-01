@@ -248,7 +248,7 @@ void Interpreter::visit(ReturnStmt& node)
     str = std::regex_replace(str, std::regex("\\\\n"), "\n");
     str = std::regex_replace(str, std::regex("\\\\t"), "\t");
     std::cout <<">>>" << str << "\n";
-      // throw new MyPLReturnException;
+    // throw new MyPLReturnException;
 }
 
 void Interpreter::visit(IfStmt& node)
@@ -571,6 +571,7 @@ void Interpreter::visit(Expr& node)
             else if(DIVIDE)
               curr_val.set(lval / rval);
           }
+          
           //addition with strings and chars
           else 
           {
@@ -619,18 +620,21 @@ void Interpreter::visit(Expr& node)
         //case for and or 
         case AND: case OR:
         {
-          bool lval;
-          bool rval;
-          lhs_val.value(lval);
-          rhs_val.value(rval);
-          if (AND)
-            curr_val.set(lval and rval);
-          else if(OR)
-            curr_val.set(lval or rval);
+          if(node.op->type() == AND or node.op->type() == OR) {
+            bool lval;
+            bool rval;
+            lhs_val.value(lval);
+            rhs_val.value(rval);
+            if (AND)
+              curr_val.set(lval and rval);
+            else if(OR)
+              curr_val.set(lval or rval);
+          }
         }
       }
     }
   }
+  // std::cout << curr_val.to_string() << "\n";
 }
 
 void Interpreter::visit(SimpleTerm& node)
