@@ -58,16 +58,17 @@ int main(int argc, char* argv[])
     //   interpret the node
     // read each token in the file until EOS or error
     Interpreter interpreter;
-    try {
-      Repl repl_node;
-      parser.parse(repl_node);
-      TypeChecker type_checker;
-      repl_node.accept(type_checker);
-      cout << "type checked \n";
-      repl_node.accept(interpreter);
-    } catch (MyPLException e) {
-      cout << e.to_string() << endl;
-      exit(1);
+    while(parser.eof_found == false) {
+      try {
+        Repl repl_node;
+        parser.parse(repl_node);
+        TypeChecker type_checker;
+        repl_node.accept(type_checker);
+        repl_node.accept(interpreter);
+      } catch (MyPLException e) {
+        cout << e.to_string() << endl;
+        exit(1);
+      }
     }
       // clean up the input stream
     if (input_stream != &cin)

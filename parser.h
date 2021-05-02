@@ -15,7 +15,7 @@
 class Parser
 {
 public:
-
+  bool eof_found = false;
   // create a new recursive descent parser
   Parser(const Lexer& program_lexer);
 
@@ -99,6 +99,9 @@ bool Parser::is_operator(TokenType t)
 //Repl session
 void Parser::parse(Repl& node)
 {
+  // if(curr_token.type() == COLON){
+  //   eat(COLON, "expecting colon ");
+  // }
   std::cout << "Enter statements: \n";
   advance();
   while (re_found == false && curr_token.type()!= EOS)
@@ -109,6 +112,7 @@ void Parser::parse(Repl& node)
   // std::cout << "endpoint found \n";
   if(curr_token.type() == EOS) {
     eat(EOS, "Expecting end-of-file ");
+    eof_found = true;
   }
 }
 
