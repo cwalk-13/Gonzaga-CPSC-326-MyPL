@@ -10,4 +10,5 @@ To evaluate an expression make a return statement with the expression, followed 
 return expr: <br>
 return 3+2:<br>
 Ctrl + d is equivalent to EOF, and will exit the program.
+![image](https://user-images.githubusercontent.com/59989219/116802819-f6765d00-aaca-11eb-8066-8f3cf86d919b.png)
 
